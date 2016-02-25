@@ -24,7 +24,23 @@
 	-->
 <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="js/ajaxfileupload.js"></script>
+<script charset="utf-8" src="js/kindeditor-4.1.7/kindeditor-min.js"></script>
+<script charset="utf-8" src="js/kindeditor-4.1.7/lang/zh_CN.js"></script>
 <script type="text/javascript">
+        var editor;
+        KindEditor.ready(function(K) {
+        	editor = K.create('#editor_id', {
+			resizeType : 1,
+			allowPreviewEmoticons : false,
+			allowImageUpload : true,
+			uploadJson : 'js/kindeditor-4.1.7/jsp/upload_json.jsp',
+			allowImageRemote: false,
+			items : [
+				'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+				'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+				'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+        	});
+	});
 	function regester(ope) {
 		if (ope == 'add') {
 			$("#form").attr("action", "user/addUser.do");
@@ -125,6 +141,14 @@
 							<a id="imageUrl_show" href="#" onclick="javascript:showImage('${s.imageUrl}')">预览图片</a>
 						</c:if>
 				</td>
+			</tr>
+			<tr>
+			   <td>描述:</td>
+			   <td>
+			      <textarea id="editor_id" name="content" style="width:700px;height:300px;">
+							&lt;strong&gt;HTML内容&lt;/strong&gt;
+				  </textarea>
+			   </td>
 			</tr>
 			<tr>
 				<c:if test="${s.id ne null}">
