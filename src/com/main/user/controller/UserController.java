@@ -112,58 +112,7 @@ public class UserController {
 		return null;
 
 	}
-	
-	
-	@RequestMapping(value = "/UploadImg.do")
-	@ResponseBody
-	public String UploadImg(Model model) {
-		System.out.println("方法开始执行了！");
-		DiskFileItemFactory diskFactory = new DiskFileItemFactory();
-		// 即硬盘缓存 1M
-		diskFactory.setSizeThreshold(4 * 1024);
-		ServletFileUpload upload = new ServletFileUpload(diskFactory);
-		// 设置允许上传的最大文件大小 4M
-		upload.setSizeMax(4 * 1024 * 1024);
-		upload.setHeaderEncoding("utf-8");
-		List<FileItem> fileItems = null;
-		if(!ServletFileUpload.isMultipartContent(request)){
-			return  getError("无上传文件。");
-		}
-		try {
-			fileItems = upload.parseRequest(request);
-		} catch (FileUploadException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		Iterator<FileItem> iter = fileItems.iterator();
-		while (iter.hasNext()) {
-			FileItem item = (FileItem) iter.next();
-			String fileName = item.getName();
-			String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-			// 如果不是表单普通内容
-			if (!item.isFormField()) {
-				if (fileExt == null || "png|jpg|bmp".indexOf(fileExt) == -1) {
-					return  getError("请上传图片文件。");
-				}
-				if(item.getSize() > 10000){
-					return  getError("上传文件大小超过限制。");
-				}
-				InputStream is;
-				String remoteFileName = null;
-				try {
-					is = item.getInputStream();
-					remoteFileName = SaveFileFromInputStream(is,"D:"+File.separatorChar+File.separatorChar+"image",fileExt);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return remoteFileName;
-			}else{
-				return  getError("文件上传出错。");
-			}
-		}
-		return  getError("无上传文件。");
-	}
+
 	
 	
 	
@@ -201,45 +150,6 @@ public class UserController {
 		return savePath;         
    }         
 	
-    private String getError(String message) {
-    	JSONObject obj = new JSONObject();
-    	obj.put("error", 1);
-    	obj.put("message", message);
-    	return obj.toJSONString();
-    }
-    
-    /**
-     * 图片上传
-     * @param ctx
-     * @throws IOException
-     */
-    @RequestMapping(value = "/UploadImgEditor.do")
-	@ResponseBody
-    public void upload_img(HttpServletRequest ctx) throws IOException {
-        File imgFile = (File) ctx.getAttribute("imgFile");
-        /*if(imgFile.length() > MAX_IMG_SIZE ){
-            ctx.output_json(
-                new String[]{"error","message"}, 
-                new Object[]{1,ResourceUtils.getString("error", "file_too_large", MAX_IMG_SIZE/1024)}
-            );
-            return ;
-        }
-        String uri = new SimpleDateFormat("yyyyMMdd").format(new Date()) 
-            + "/IMG_"
-            + RandomStringUtils.randomAlphanumeric(4) 
-            + '_'
-            + String.valueOf(ctx.user().getId()) 
-            + '.'
-            + FilenameUtils.getExtension(imgFile.getName()).toLowerCase();
-     
-        Multimedia.saveImage(imgFile, img_path + uri, 0, 0);
-        ctx.output_json(new String[]{"error","url"}, new Object[]{0, LinkTool.upload("space/"+uri)});*/
-    }
-
-    
-    
-    
-    
     
 	@RequestMapping("/addUser.do")
 	public String addUser(Student student){
